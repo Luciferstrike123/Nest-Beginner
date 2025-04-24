@@ -20,8 +20,8 @@ export class User {
   isPremium: boolean;
 
   @OneToMany(() => Comment, (comment) => comment.user)
-  comment: Comment[];
+  comments: Comment[];
 
   @OneToMany(() => Like, (like) => like.user)
-  like: Like[];
+  likes: Like[];
 }

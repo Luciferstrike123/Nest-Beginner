@@ -1,18 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Song } from './song.entity';
 import { User } from './user.entity';
 
 @Entity()
 export class Comment {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   content: string;
-
-  @ManyToOne(() => User, (user) => user.comment)
+  
+  @ManyToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Song, (song) => song.comment)
-  music: Song;
+  @ManyToOne(() => Song)
+  song: Song;
 }

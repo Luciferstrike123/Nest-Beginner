@@ -24,8 +24,8 @@ export class Song {
   author: Author;
 
   @OneToMany(() => Comment, (comment) => comment.song)
-  comment: Comment[];
+  comments: Comment[];
 
   @OneToMany(() => Like, (like) => like.song)
-  like: Like[];
+  likes: Like[];
 }
