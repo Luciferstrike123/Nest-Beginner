@@ -4,7 +4,7 @@ A simple web service for managing music songs and user accounts.
 Built with **NestJS**, **TypeORM**, **PostgreSQL (via Supabase)**, and deployed on **Render**.  
 Supports full CRUD operations for songs and users.
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/Luciferstrike123/Nest-Beginner)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Luciferstrike123/Nest-Beginner)](https://github.com/Luciferstrike123/Nest-Beginner/releases)
 
 ---
 
