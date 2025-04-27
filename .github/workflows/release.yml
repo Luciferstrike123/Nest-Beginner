@@ -1,0 +1,37 @@
+name: Version bump and Release
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+      
+      - name: Setup Nodejs
+        uses: actions/setup-node@v3.9.1 
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Bump version and generate change logs
+        run: |
+          git config --global user.email ${{ secrets.GIT_USER_EMAIL }}
+          git config --global user.name ${{ secrets.GIT_USER_NAME }}
+          npm run release
+
+      - name: Push changes
+        run: |
+          git push --follow-tags origin main
+
+      - name: Create Github Release
+        uses: softprops/action-gh-release@v2.2.2
