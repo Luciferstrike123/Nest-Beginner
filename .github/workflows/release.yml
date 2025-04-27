@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   release:
@@ -14,24 +15,38 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
-      
+        with:
+          fetch-depth: 0 
+
       - name: Setup Nodejs
-        uses: actions/setup-node@v3.9.1 
+        uses: actions/setup-node@v3.9.1
         with:
           node-version: 20
+          cache: 'npm'  
 
       - name: Install dependencies
         run: npm install
 
-      - name: Bump version and generate changelogs
+      - name: Bump version and generate change logs
         run: |
-          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
-          git config --global user.name "${{ secrets.GIT_USER_NAME }}"
-          npm run release
-
+          git config --global user.email ${{ secrets.GIT_USER_EMAIL }}
+          git config --global user.name ${{ secrets.GIT_USER_NAME }}
+          npm run release -- --verbose || { echo "standard-version failed"; exit 1; }
+          
       - name: Push changes
         run: |
-          git push origin main --follow-tags
+          git push --follow-tags origin main || { echo "Push failed"; exit 1; }
+          
+      - name: Debug tags
+        run: |
+          echo "Local tags:"
+          git tag -l
+          echo "Remote tags:"
+          git ls-remote --tags origin
+        continue-on-error: true
 
-      - name: Create GitHub Release
+      - name: Create Github Release
         uses: softprops/action-gh-release@v2.2.2
+        with:
+          body_path: CHANGELOG.md
+          fail_on_unmatched_files: false
