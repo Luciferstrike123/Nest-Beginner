@@ -5,6 +5,7 @@ import { SongModule } from './song/song.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
+import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { UserModule } from './user/user.module';
     }),
     SongModule,
     UserModule,
+    FeedbackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

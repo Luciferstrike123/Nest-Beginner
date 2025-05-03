@@ -1,7 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Author } from './author.entity';
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
+import {Question} from './question.entity';
 
 @Entity()
 export class Song {
@@ -28,4 +35,7 @@ export class Song {
 
   @OneToMany(() => Like, (like) => like.song)
   likes: Like[];
+
+  @OneToMany(() => Question, (question) => question.song, {cascade: true})
+  questions: Question[];
 }

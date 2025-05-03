@@ -9,10 +9,10 @@ async function bootstrap() {
     .setTitle('Music App API')
     .setDescription('API Document for the 52kHZ music listening application')
     .setVersion('1.0')
-    .build()
+    .build();
 
-  const document = SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('api', app, document)
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap().catch((err) => {
