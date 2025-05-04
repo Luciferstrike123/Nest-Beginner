@@ -11,7 +11,9 @@ export class QuestionOption {
     @Column()
     option: string;
 
-    @ManyToOne(() => Question, (question) => question.questionOptions)
+    @ManyToOne(() => Question, (question) => question.questionOptions,{
+        onDelete:'CASCADE',
+    })
     question: Question;
 
     @OneToMany(() => Answer, (answer) => answer.questionOption, {cascade: true})

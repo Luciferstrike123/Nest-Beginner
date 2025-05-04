@@ -18,7 +18,9 @@ export class Question {
     })
     type: QuestionType;
 
-    @ManyToOne(() => Song, (song) => song.questions)
+    @ManyToOne(() => Song, (song) => song.questions, {
+        onDelete: 'CASCADE',
+    })
     song: Song;
 
     @OneToMany(() => QuestionOption, (questionOption)=> questionOption.question, {cascade: true})

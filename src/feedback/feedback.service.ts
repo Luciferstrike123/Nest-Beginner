@@ -97,12 +97,16 @@ export class FeedbackService {
                 };
             }
 
-            const questionItems: QuestionItemDTO[] = song.questions.map((question) => ({
-                id: question.id,
-                question: question.question,
-                type: question.type,
-                options: question.questionOptions?.map((option) => option.option) || [],
-            }));
+            const questionItems: QuestionItemDTO[] = (song.questions || [])
+                .sort((a, b) => a.id - b.id)
+                .map((question) => ({
+                    id: question.id,
+                    question: question.question,
+                    type: question.type,
+                    options: (question.questionOptions || [])
+                        .sort((a,b) => a.id - b.id)
+                        .map((option) => option.option),
+                }));
 
             return {
                 code: 200,
@@ -145,32 +149,40 @@ export class FeedbackService {
     }
 
     async deleteQuestions(questions: DeleteQuestionsDto): Promise<CreateFeedBackResponseDTO> {
-        const {questionIds} = questions;
+        try{
+            const {questionIds} = questions;
 
-        if(questionIds.length <= 0){
-            throw new NotFoundException("The questionIds is empty");
-        } else{
-            await this.questionRepo.delete(questionIds);
-        }
+            if(questionIds.length <= 0){
+                throw new NotFoundException("The questionIds is empty");
+            } else{
+                await this.questionRepo.delete(questionIds);
+            }
 
-        return{
-            code: 200,
-            message: "The feedback questions deleted successfully",
+            return{
+                code: 200,
+                message: "The feedback questions deleted successfully",
+            }
+        } catch(error){
+            throw new Error(`failed to delete question: ${error.message}`);
         }
     }
 
     async deleteOptions(options: DeleteOptionsDto): Promise<CreateFeedBackResponseDTO> {
-        const {optionIds} = options;
+        try{
+            const {optionIds} = options;
 
-        if(optionIds.length <= 0) {
-            throw new NotFoundException("The optionIds is empty");
-        } else {
-            await this.questionOptionRepo.delete(optionIds);
-        }
+            if(optionIds.length <= 0) {
+                throw new NotFoundException("The optionIds is empty");
+            } else {
+                await this.questionOptionRepo.delete(optionIds);
+            }
 
-        return {
-            code: 200,
-            message: "operations done well",
+            return {
+                code: 200,
+                message: "operations done well",
+            }
+        } catch(error){
+            throw new Error(`failed to delete options: ${error.message}`);
         }
     }
 
@@ -205,7 +217,7 @@ export class FeedbackService {
         }
 
         return {
-            code: 200,
+            code: 201,
             message:"Add new questions successfully",
         }
     }
@@ -245,9 +257,56 @@ export class FeedbackService {
         }
 
         return {
-            code: 200,
+            code: 201,
             message: "Add new options successfully",
         }
     }
 
+    async updateQuestion(id: number, updateData:{question: string}): Promise<CreateFeedBackResponseDTO> {
+        try{
+            const question = await this.questionRepo.findOne({where: {id}});
+
+            if(!question){
+                return {
+                    code: 404,
+                    message:`Question with ID ${id} not found`,
+                }
+            }
+
+            question.question = updateData.question;
+
+            await this.questionRepo.save(question);
+
+            return {
+                code: 200,
+                message:"Question updated successfully",
+            }
+        } catch(error){
+            throw new Error(`Failed to update question: ${error.message}`);
+        }
+    }
+
+    async updateOption(id: number, updateData:{option: string}): Promise<CreateFeedBackResponseDTO> {
+        try{
+            const option = await this.questionOptionRepo.findOne({where:{id: id}});
+
+            if(!option){
+                return {
+                    code: 404,
+                    message:`option with ID ${id} not found`,
+                }
+            }
+
+            option.option = updateData.option;
+
+            await this.questionOptionRepo.save(option);
+
+            return {
+                code: 200,
+                message:"Option updated successfully",
+            }
+        } catch(error){
+            throw new Error(`failed to update option: ${error.message}`);
+        }
+    }
 }

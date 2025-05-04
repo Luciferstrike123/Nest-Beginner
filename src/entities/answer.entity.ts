@@ -9,9 +9,13 @@ export class Answer {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @ManyToOne(() => QuestionOption, (questionOption) => questionOption.answers)
+    @ManyToOne(() => QuestionOption, (questionOption) => questionOption.answers, {
+        onDelete:'CASCADE',
+    })
     questionOption: QuestionOption;
 
-    @ManyToOne(() => User, (user) => user.answers)
+    @ManyToOne(() => User, (user) => user.answers, {
+        onDelete:'CASCADE',
+    })
     user: User;
 }
