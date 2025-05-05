@@ -309,4 +309,20 @@ export class FeedbackService {
             throw new Error(`failed to update option: ${error.message}`);
         }
     }
+
+    async getOpenedQuestions(songId: string): Promise<{
+        code: number;
+        message: string;
+        questions: Question[];
+    }> {
+        const song = await this.songRepo.findOne({
+            where: { id: songId},
+            relations: ['questions'],
+        })
+
+        if (!song) return { code: 400, message: 'Song not found', questions: [] };
+        const openedQuestions = song.questions.filter(q => q.type === QuestionType.OPEN_ENDED);
+        if (!openedQuestions.length) return { code: 400, message: 'No opened questions for this song', questions: [] };
+        return { code: 200, message: 'Opened questions retrieved successfully', questions: openedQuestions };
+    }
 }

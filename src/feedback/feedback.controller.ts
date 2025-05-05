@@ -16,6 +16,7 @@ import { CreateFeedBackResponseDTO } from './dto/response/createFeedback.dto.res
 import { DeleteQuestionsDto } from './dto/request/deleteQuestion.dto.request';
 import { DeleteOptionsDto } from './dto/request/deleteOption.dto.request';
 import { AddNewOptions } from './dto/request/addNewOptions.dto.request';
+import { Question } from 'src/entities/question.entity';
 
 
 @ApiTags('feedbacks')
@@ -151,4 +152,14 @@ export class FeedbackController{
       return this.FeedbackService.updateOption(id, updateData);
     }
 
+    @Get('openedQuestion/:songId')
+    @ApiOperation({ summary: 'Get opened questions for a specific song' })
+    @ApiParam({ name: 'songId', description: 'ID of the song to retrieve opened questions for' })
+    getOpenedQuestion(@Param('songId') songId: string): Promise<{
+            code: number;
+            message: string;
+            questions: Question[];
+        }> {
+        return this.FeedbackService.getOpenedQuestions(songId);
+    }
 }

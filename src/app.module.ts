@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { FeedbackModule } from './feedback/feedback.module';
+import { AnswerModule } from './answer/answer.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { FeedbackModule } from './feedback/feedback.module';
     SongModule,
     UserModule,
     FeedbackModule,
+    AnswerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
