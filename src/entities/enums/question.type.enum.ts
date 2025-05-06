@@ -1,0 +1,7 @@
+export enum QuestionType {
+    SINGLE_CHOICE = 'SINGLE_CHOICE',
+    MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+    OPEN_ENDED = 'OPEN_ENDED',
+    RATING_SCALE = 'RATING_SCALE',
+    YES_NO = 'YES_NO', 
+}

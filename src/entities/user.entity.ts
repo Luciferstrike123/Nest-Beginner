@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
+import { Answer } from './answer.entity';
 
 @Entity()
 export class User {
@@ -24,4 +25,7 @@ export class User {
 
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
+  
+  @OneToMany(() => Answer, (answer) => answer.user)
+  answers: Answer[];
 }

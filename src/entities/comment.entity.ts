@@ -9,7 +9,7 @@ export class Comment {
 
   @Column()
   content: string;
-  
+
   @ManyToOne(() => User)
   user: User;
 

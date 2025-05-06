@@ -1,8 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { SongService } from "./song.service";
-import { UpdateSongDto } from "./dto/update-song.dto";
-import { CreateSongDto } from "./dto/create-song.dto";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SongService } from './song.service';
+import { UpdateSongDto } from './dto/update-song.dto';
+import { CreateSongDto } from './dto/create-song.dto';
 
 @ApiTags('songs')
 @Controller('songs')
