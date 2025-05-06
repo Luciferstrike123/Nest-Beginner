@@ -1,6 +1,9 @@
+import { ApiProperty } from "@nestjs/swagger";
 
 export class StatisticResponseDto {
+    @ApiProperty()
     code: number;
+    @ApiProperty()
     message: string;
     data?: {
         songId: string;
@@ -21,7 +24,9 @@ export class StatisticResponseDto {
 }
 
 export class OpenedAnswersPaginatedDto {
+    @ApiProperty()
     code: number;
+    @ApiProperty()
     message: string;
     data?: {
         questionId: number;
