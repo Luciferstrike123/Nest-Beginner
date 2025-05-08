@@ -47,4 +47,10 @@ export class UserController {
   delete(@Param('id') id: string) {
     return this.userService.delete(id);
   }
+
+  @Get('premium/:id')
+  @ApiOperation({ summary: 'Get premium user by id' })
+  findTotalScrore(@Param('id') id: string): Promise<{code: number, message: string, totalScore: number}> {
+    return this.userService.findTotalScore(id);
+  }
 }

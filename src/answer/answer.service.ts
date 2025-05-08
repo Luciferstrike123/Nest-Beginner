@@ -124,6 +124,10 @@ export class AnswerService {
                 const answerRepoWithTransaction = manager.getRepository(Answer);
                 await answerRepoWithTransaction.save(entities);
             });
+            await this.userRepo.update(userId, {
+                totalScore: () => 'totalScore + 1',
+            });
+
             return { code: 201, message: 'Answers saved successfully' };
         } catch (err) {
             console.error(err);
