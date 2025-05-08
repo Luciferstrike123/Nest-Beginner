@@ -28,4 +28,7 @@ export class User {
   
   @OneToMany(() => Answer, (answer) => answer.user)
   answers: Answer[];
+
+  @Column({default: 0})
+  totalScore: number;
 }
