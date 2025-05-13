@@ -9,9 +9,10 @@ import {
     Patch,
     UsePipes, ValidationPipe,
     UseGuards,
-    Req
+    Req,
+    Query
   } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FeedbackService } from './feedback.service';
 import { CreateFeedBackRequestDTO } from './dto/request/createFeedback.dto.request';
 import { CreateFeedBackResponseDTO } from './dto/response/createFeedback.dto.response';
@@ -84,9 +85,10 @@ export class FeedbackController{
 
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('access-token')
-    @Get(':id_song')
+    @Get()
     @ApiOperation({summary:"Get list question of the song"})
-    find(@Param('id_song') id_song: string){
+    @ApiQuery({ name: 'song', required: true, description: 'ID of the song' })
+    find(@Query('song') id_song: string){
       return this.FeedbackService.find(id_song);
     }
 
@@ -198,14 +200,16 @@ export class FeedbackController{
 
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('access-token')
-    @Get('openedQuestion/:songId')
+    @Get('openedQuestion')
     @ApiOperation({ summary: 'Get opened questions for a specific song' })
-    @ApiParam({ name: 'songId', description: 'ID of the song to retrieve opened questions for' })
-    getOpenedQuestion(@Param('songId') songId: string): Promise<{
-            code: number;
-            message: string;
-            questions: Question[];
-        }> {
-        return this.FeedbackService.getOpenedQuestions(songId);
+    @ApiQuery({ name: 'songId', required: true, description: 'ID of the song to retrieve opened questions for' })
+    getOpenedQuestion(
+      @Query('songId') songId: string,
+    ): Promise<{
+      code: number;
+      message: string;
+      questions: Question[];
+    }> {
+      return this.FeedbackService.getOpenedQuestions(songId);
     }
 }

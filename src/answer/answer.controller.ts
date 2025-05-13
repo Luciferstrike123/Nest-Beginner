@@ -224,8 +224,8 @@ export class AnswerController {
         description: 'Internal server error',
         type: StatisticResponseDto,
     })
-    @Get('statistic/:songId')
-    getStatistic(@Req() req: Request ,@Param('songId') songId: string): Promise<StatisticResponseDto> {
+    @Get('statistic')
+    getStatistic(@Req() req: Request, @Query('song') songId: string): Promise<StatisticResponseDto> {
         const userId = req.user?.['userId'] ?? null;
         if (!userId) {
             throw new NotFoundException('User not found');
@@ -233,7 +233,7 @@ export class AnswerController {
         return this.answerService.getStatistic(userId ,songId);
     }
 
-    @Get('opened-answers/:questionId')
+    @Get('opened-answers')
     @UsePipes(new ValidationPipe({ transform: true }))
     @ApiOperation({ summary: 'Retrieve paginated open-ended answers for a specific question' })
     @ApiQuery({ name: 'page', required: true, type: Number, example: 1 })
@@ -277,7 +277,7 @@ export class AnswerController {
       })
     async getOpenedAnswers(
         @Req() req: Request,
-        @Param('questionId') questionId: number,
+        @Query('questionId') questionId: number,
         @Query('page') page: number,
         @Query('limit') limit: number,
     ): Promise<OpenedAnswersPaginatedDto> {
