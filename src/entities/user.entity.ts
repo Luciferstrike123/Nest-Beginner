@@ -2,6 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
 import { Answer } from './answer.entity';
+import { Role } from './enums/role.enum';
+import { Song } from './song.entity';
 
 @Entity()
 export class User {
@@ -20,6 +22,12 @@ export class User {
   @Column({ default: false })
   isPremium: boolean;
 
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
+  role: Role;
+
+  @OneToMany(() => Song, (song) => song.author)
+  music: Song[];
+
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
@@ -28,4 +36,7 @@ export class User {
   
   @OneToMany(() => Answer, (answer) => answer.user)
   answers: Answer[];
+
+  @Column({default: 0})
+  totalScore: number;
 }

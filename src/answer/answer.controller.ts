@@ -1,10 +1,14 @@
-import { Body, Controller, Get, Param, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, Query, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateAnswerRequestDto } from './dto/request/create.answer.request.dto';
 import { AnswerResponseDto } from './dto/response/answerResponse';
 import { AnswerService } from './answer.service';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OpenedAnswersPaginatedDto, StatisticResponseDto } from './dto/response/statisticResponse';
+import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
+import { Request } from 'express';
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 @ApiTags('Answers')
 @Controller('answers')
 export class AnswerController {
@@ -71,6 +75,7 @@ export class AnswerController {
     createAnswer(
         @Body() createAnswerRequest: CreateAnswerRequestDto,
     ): Promise<AnswerResponseDto> {
+
         return this.answerService.createAnswer(createAnswerRequest);
     }
 
@@ -220,8 +225,12 @@ export class AnswerController {
         type: StatisticResponseDto,
     })
     @Get('statistic/:songId')
-    getStatistic(@Param('songId') songId: string): Promise<StatisticResponseDto> {
-        return this.answerService.getStatistic(songId);
+    getStatistic(@Req() req: Request ,@Param('songId') songId: string): Promise<StatisticResponseDto> {
+        const userId = req.user?.['userId'] ?? null;
+        if (!userId) {
+            throw new NotFoundException('User not found');
+        }        
+        return this.answerService.getStatistic(userId ,songId);
     }
 
     @Get('opened-answers/:questionId')
@@ -267,10 +276,15 @@ export class AnswerController {
         type: OpenedAnswersPaginatedDto,
       })
     async getOpenedAnswers(
+        @Req() req: Request,
         @Param('questionId') questionId: number,
         @Query('page') page: number,
         @Query('limit') limit: number,
     ): Promise<OpenedAnswersPaginatedDto> {
-        return this.answerService.getOpenedAnswersPaginated(questionId, page, limit);
+        const userId = req.user?.['userId'] ?? null;
+        if (!userId) {
+            throw new NotFoundException('User not found');
+        }
+        return this.answerService.getOpenedAnswersPaginated(userId ,questionId, page, limit);
     }
 }

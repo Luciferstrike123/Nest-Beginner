@@ -124,6 +124,10 @@ export class AnswerService {
                 const answerRepoWithTransaction = manager.getRepository(Answer);
                 await answerRepoWithTransaction.save(entities);
             });
+            await this.userRepo.update(userId, {
+                totalScore: () => 'totalScore + 1',
+            });
+
             return { code: 201, message: 'Answers saved successfully' };
         } catch (err) {
             console.error(err);
@@ -131,12 +135,12 @@ export class AnswerService {
         }
     }
 
-    async getStatistic(songId: string): Promise<StatisticResponseDto> {
+    async getStatistic(userId: string ,songId: string): Promise<StatisticResponseDto> {
         const song = await this.songRepo.findOne({
-            where: { id: songId },
+            where: { id: songId, author: { id: userId } },
             relations: ['questions', 'questions.questionOptions'],
         });
-        if (!song) return { code: 400, message: 'Song not found' };
+        if (!song) return { code: 400, message: 'Song not found or you are not allowed to access this' };
 
         // Get total participants
         const questionIds = song.questions.map(q => q.id);
@@ -232,11 +236,11 @@ export class AnswerService {
         };
     }
 
-    async getOpenedAnswersPaginated(questionId: number, page: number, limit: number): Promise<OpenedAnswersPaginatedDto> {
+    async getOpenedAnswersPaginated(userId: string ,questionId: number, page: number, limit: number): Promise<OpenedAnswersPaginatedDto> {
         const question = await this.questionRepo.findOne({
-            where: { id: questionId },
+            where: { id: questionId, song:{author:{id: userId}} },
         });
-        if (!question) return { code: 400, message: 'Question not found' };
+        if (!question) return { code: 400, message: 'Question not found or you are not allowed to access this' };
 
         const totalItems = await this.answerRepo.count({
             where: { questionId, openedAnswer: Not(IsNull()) },

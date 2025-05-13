@@ -9,6 +9,16 @@ async function bootstrap() {
     .setTitle('Music App API')
     .setDescription('API Document for the 52kHZ music listening application')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
