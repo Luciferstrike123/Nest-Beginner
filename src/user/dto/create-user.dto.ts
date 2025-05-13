@@ -12,9 +12,9 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsString()
-  username: string;
-
+  retypePassword: string;
+  
   @ApiProperty()
-  @IsBoolean()
-  isPremium: boolean;
+  @IsString()
+  username: string;
 }

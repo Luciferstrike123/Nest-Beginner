@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Question } from 'src/entities/question.entity';
 import { QuestionOption } from 'src/entities/questions.option.entity';
 import { CreateFeedBackRequestDTO } from './dto/request/createFeedback.dto.request';
@@ -12,6 +12,7 @@ import { QuestionItemDTO } from './dto/request/questionItem.dto';
 import { DeleteQuestionsDto } from './dto/request/deleteQuestion.dto.request';
 import { DeleteOptionsDto } from './dto/request/deleteOption.dto.request';
 import { AddNewOptions } from './dto/request/addNewOptions.dto.request';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class FeedbackService {
@@ -24,13 +25,27 @@ export class FeedbackService {
 
         @InjectRepository(Song)
         private songRepo: Repository<Song>,
+
+        @InjectRepository(User)
+        private userRepo: Repository<User>,
     ) {}
     
-    async create(feedbackDto: CreateFeedBackRequestDTO): Promise<CreateFeedBackResponseDTO> {
+    async create(userId: string, feedbackDto: CreateFeedBackRequestDTO): Promise<CreateFeedBackResponseDTO> {
         const id_song = feedbackDto.id_song;
         const song = await this.songRepo.findOne({where: {id: id_song}});
         if (!song) {
             throw new NotFoundException(`Song with ID ${id_song} not found`);
+        }
+        const user = await this.userRepo.findOne({where: {id: userId}});
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        if(song.author.id !== user.id) {
+            return {
+                code: 403,
+                message: 'You are not authorized to create feedback for this song',
+            };
         }
 
         const questionCount = await this.questionRepo.count({
@@ -125,10 +140,21 @@ export class FeedbackService {
         }
     }
 
-    async delete(id_song: string): Promise<CreateFeedBackResponseDTO> {
+    async delete(userId: string ,id_song: string): Promise<CreateFeedBackResponseDTO> {
         const song = await this.songRepo.findOne({where: {id: id_song}});
         if (!song) {
             throw new NotFoundException(`Song with ID ${id_song} not found`);
+        }
+
+        const user = await this.userRepo.findOne({where: {id: userId}});
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+        if(song.author.id !== user.id) {
+            return {
+                code: 403,
+                message: 'You are not authorized to delete feedback for this song',
+            };
         }
 
         const oldQuestions = await this.questionRepo.find({
@@ -148,7 +174,7 @@ export class FeedbackService {
         }
     }
 
-    async deleteQuestions(questions: DeleteQuestionsDto): Promise<CreateFeedBackResponseDTO> {
+    async deleteQuestions(userId: string ,questions: DeleteQuestionsDto): Promise<CreateFeedBackResponseDTO> {
         try{
             const {questionIds} = questions;
 
@@ -156,6 +182,20 @@ export class FeedbackService {
                 throw new NotFoundException("The questionIds is empty");
             } else{
                 await this.questionRepo.delete(questionIds);
+            }
+
+            const fountQuestions = await this.questionRepo.findBy({id: In(questionIds)});
+
+            const unAuthorizedQuestions = fountQuestions.filter((question) => {
+                const song = question.song;
+                return song.author.id !== userId;
+            });
+
+            if (unAuthorizedQuestions.length > 0) {
+                return {
+                    code: 403,
+                    message: 'You are not authorized to delete some of these questions',
+                };
             }
 
             return{

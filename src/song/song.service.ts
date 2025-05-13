@@ -29,11 +29,19 @@ export class SongService {
     return song;
   }
 
-  update(id: string, updateDto: UpdateSongDto) {
+  update(userId: string ,id: string, updateDto: UpdateSongDto) {
+    const song = this.songRepo.findOne({ where: { id, author:{id: userId} } });
+    if (!song) {
+      throw new Error(`Song with id ${id} not found or not owned by user ${userId}`);
+    }
     return this.songRepo.update(id, updateDto);
   }
 
-  remove(id: string) {
+  remove(userId: string ,id: string) {
+    const song = this.songRepo.findOne({ where: { id, author:{id: userId} } });
+    if (!song) {
+      throw new Error(`Song with id ${id} not found or not owned by user ${userId}`);
+    }
     return this.songRepo.delete(id);
   }
 }

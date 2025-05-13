@@ -20,7 +20,8 @@ export class CreateSongDto {
   @IsNumber()
   playCount?: number;
 
-  @ApiProperty({ description: 'UUID of the author' })
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsUUID()
   authorId: string;
 }

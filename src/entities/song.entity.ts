@@ -9,6 +9,7 @@ import { Author } from './author.entity';
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
 import {Question} from './question.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Song {
@@ -27,8 +28,8 @@ export class Song {
   @Column({ default: 0 })
   playCount: number;
 
-  @ManyToOne(() => Author, (author) => author.music)
-  author: Author;
+  @ManyToOne(() => User, (user) => user.music)
+  author: User;
 
   @OneToMany(() => Comment, (comment) => comment.song)
   comments: Comment[];

@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { AnswerModule } from './answer/answer.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,8 +32,9 @@ import { AnswerModule } from './answer/answer.module';
         };
       },
     }),
-    SongModule,
+    AuthModule,
     UserModule,
+    SongModule,
     FeedbackModule,
     AnswerModule,
   ],
