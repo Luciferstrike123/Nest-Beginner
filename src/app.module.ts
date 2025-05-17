@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { AnswerModule } from './answer/answer.module';
 import { AuthModule } from './auth/auth.module';
+import { SpotifyModule } from './spotify/spotify.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { AuthModule } from './auth/auth.module';
     SongModule,
     FeedbackModule,
     AnswerModule,
+    SpotifyModule
   ],
   controllers: [AppController],
   providers: [AppService],
