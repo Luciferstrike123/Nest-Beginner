@@ -4,21 +4,49 @@ import { Song } from 'src/entities/song.entity';
 import { Repository } from 'typeorm';
 import { CreateSongDto } from './dto/create-song.dto';
 import { UpdateSongDto } from './dto/update-song.dto';
+import { User } from 'src/entities/user.entity';
+import { SongDTO } from './dto/song.dto';
 
 @Injectable()
 export class SongService {
-  constructor(@InjectRepository(Song) private songRepo: Repository<Song>) {}
+  constructor(
+    @InjectRepository(Song) private songRepo: Repository<Song>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+) {}
 
-  create(songDto: CreateSongDto): Promise<Song> {
-    const song = this.songRepo.create(songDto);
+  async create(userId: string ,songDto: CreateSongDto): Promise<Song> {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new Error(`User with id ${userId} not found`);
+    }
+    const song = new Song();
+    song.title = songDto.title;
+    song.fileUrl = songDto.fileUrl;
+    song.author = user;
     return this.songRepo.save(song);
   }
 
-  findAll(): Promise<Song[]> {
-    return this.songRepo.find({ relations: ['author', 'comments', 'likes'] });
+  async findAll(): Promise<SongDTO[]> {
+    const songs = await this.songRepo.find({
+      relations: ['author', 'comments', 'likes'],
+    });
+
+    const result: SongDTO[] = songs.map((song) => ({
+      id: song.id,
+      title: song.title,
+      fileUrl: song.fileUrl,
+      duration: song.duration,
+      playCount: song.playCount,
+      authorName: song.author.username,
+      authorId: song.author.id,
+      comments: song.comments || [],
+      likes: song.likes || [],
+    }));
+
+    return result;
   }
 
-  async findOne(id: string): Promise<Song> {
+  async findOne(id: string): Promise<SongDTO> {
     const song = await this.songRepo.findOne({
       where: { id },
       relations: ['author', 'comments', 'likes'],
@@ -26,7 +54,18 @@ export class SongService {
     if (!song) {
       throw new Error(`Song with id ${id} not found`);
     }
-    return song;
+    const songDto: SongDTO = {
+      id: song.id,
+      title: song.title,
+      fileUrl: song.fileUrl,
+      duration: song.duration,
+      playCount: song.playCount,
+      authorName: song.author.username,
+      authorId: song.author.id,
+      comments: song.comments || [],
+      likes: song.likes || [],
+    };
+    return songDto;
   }
 
   update(userId: string ,id: string, updateDto: UpdateSongDto) {

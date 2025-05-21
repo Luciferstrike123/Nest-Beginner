@@ -22,7 +22,7 @@ export class Song {
   @Column()
   fileUrl: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 0 })
   duration: number;
 
   @Column({ default: 0 })
