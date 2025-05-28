@@ -19,20 +19,19 @@ import { Request } from 'express';
 
 @ApiTags('songs')
 @Controller('songs')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth('access-token')
 export class SongController {
   constructor(private readonly songService: SongService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create song' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   create(@Req() req: Request, @Body() createSongDto: CreateSongDto) {
     const userId = (req.user as { userId: string }).userId;
     if (!userId) {
       throw new NotFoundException('User not found');
     }
-    createSongDto.authorId = userId;
-    return this.songService.create(createSongDto);
+    return this.songService.create(userId ,createSongDto);
   }
 
   @Get()
@@ -49,6 +48,8 @@ export class SongController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update song by the owner' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   update(@Req() req: Request ,@Param('id') id: string, @Body() updateDto: UpdateSongDto) {
     const userId = (req.user as { userId: string }).userId;
     if (!userId) {
@@ -59,6 +60,8 @@ export class SongController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete song' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   remove(@Req() req: Request ,@Param('id') id: string) {
     const userId = (req.user as { userId: string }).userId;
     if (!userId) {

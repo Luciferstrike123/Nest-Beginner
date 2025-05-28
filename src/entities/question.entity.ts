@@ -5,7 +5,7 @@ import { QuestionOption } from './questions.option.entity';
 
 @Entity()
 export class Question {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
     id: number;
 
     @Column()

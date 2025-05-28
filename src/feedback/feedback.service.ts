@@ -32,7 +32,10 @@ export class FeedbackService {
     
     async create(userId: string, feedbackDto: CreateFeedBackRequestDTO): Promise<CreateFeedBackResponseDTO> {
         const id_song = feedbackDto.id_song;
-        const song = await this.songRepo.findOne({where: {id: id_song}});
+        const song = await this.songRepo.findOne({
+            where: {id: id_song},
+            relations: ['author'],
+        });
         if (!song) {
             throw new NotFoundException(`Song with ID ${id_song} not found`);
         }
@@ -41,7 +44,7 @@ export class FeedbackService {
             throw new NotFoundException(`User with ID ${userId} not found`);
         }
 
-        if(song.author.id !== user.id) {
+        if(song.author.id !== userId) {
             return {
                 code: 403,
                 message: 'You are not authorized to create feedback for this song',

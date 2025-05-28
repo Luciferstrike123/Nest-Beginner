@@ -1,5 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'src/entities/user.entity';
 
 export class CreateSongDto {
   @ApiProperty()
@@ -19,9 +20,4 @@ export class CreateSongDto {
   @IsOptional()
   @IsNumber()
   playCount?: number;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsUUID()
-  authorId: string;
 }

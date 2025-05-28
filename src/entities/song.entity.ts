@@ -25,7 +25,7 @@ export class Song {
   @Column()
   imageUrl: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 0 })
   duration: number;
 
   @Column({ default: 0 })
