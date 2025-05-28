@@ -19,8 +19,11 @@ export class Song {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   fileUrl: string;
+
+  @Column()
+  imageUrl: string;
 
   @Column({ nullable: true })
   duration: number;
