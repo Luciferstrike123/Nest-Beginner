@@ -35,6 +35,7 @@ export class SongService {
       id: song.id,
       title: song.title,
       fileUrl: song.fileUrl,
+      imageUrl: song.imageUrl,
       duration: song.duration,
       playCount: song.playCount,
       authorName: song.author.username,
