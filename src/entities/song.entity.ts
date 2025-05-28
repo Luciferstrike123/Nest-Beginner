@@ -22,7 +22,7 @@ export class Song {
   @Column({ nullable: true })
   fileUrl: string;
 
-  @Column()
+  @Column({ nullable: true })
   imageUrl: string;
 
   @Column({ nullable: true, default: 0 })
