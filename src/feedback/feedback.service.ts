@@ -123,7 +123,10 @@ export class FeedbackService {
                     type: question.type,
                     options: (question.questionOptions || [])
                         .sort((a,b) => a.id - b.id)
-                        .map((option) => option.option),
+                        .map((option) => ({
+                            id: option.id,
+                            option: option.option
+                        })),
                 }));
 
             return {

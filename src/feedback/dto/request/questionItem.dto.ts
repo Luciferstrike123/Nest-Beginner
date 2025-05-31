@@ -19,5 +19,5 @@ export class QuestionItemDTO {
     @IsArray()
     @IsString({each: true})
     @IsOptional()
-    options?: string[];
+    options?: {id: number, option: string}[];
 }
